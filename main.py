@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
         move_xy = get_move('  MOVE')
 
-        if not can_move(piece[0], piece_xy, move_xy):
+        if not can_move(piece[0], piece_xy, move_xy, board.pieces):
             err = 'INVALID MOVE'
             continue
 

@@ -14,7 +14,12 @@ def get_move(prompt: str):
         try:
             move = input('> ')
         except KeyboardInterrupt:
-            exit()
+            clear_console()
+
+            print('Game has ended!')
+            print()
+
+            exit(-1)
 
         if len(move) != 2:
             print('  ' + '^' * len(move))

@@ -1,13 +1,41 @@
+from typing import List
+
 from .consts import *
 from .utils import calc_xy
 
 
-def can_move(piece: str, piece_xy: str, move_xy: str):
-    x1, y1 = calc_xy(piece_xy)
-    x2, y2 = calc_xy(move_xy)
+def can_move(piece: str, piece_xy: str, move_xy: str, pieces: List[List[str]]):
+    stage1 = can_move_stage1(piece, piece_xy, move_xy)
+    if not stage1:
+        return False
 
-    if piece == BLACK_PAWN or piece == WHITE_PAWN:
-        return x1 == x2 and y1 != 1 and ((y1 == 2 and y1 + 2 == y2) or y1 + 1 == y2)
+    return can_move_stage2(piece, piece_xy, move_xy, pieces)
+
+
+def can_move_stage2(piece: str, piece_xy: str, move_xy: str, pieces: List[List[str]]):
+    return True
+
+
+def can_move_stage1(piece: str, piece_xy: str, move_xy: str):
+    y1, x1 = calc_xy(piece_xy)
+    y2, x2 = calc_xy(move_xy)
+
+    if piece == BLACK_PAWN:
+        if y1 == 1 and y2 in [2, 3] and x1 == x2:
+            return True
+
+        if y2 - y1 == 1 and x1 == x2:
+            return True
+
+        return False
+    elif piece == WHITE_PAWN:
+        if y1 == 6 and y2 in [5, 4] and x1 == x2:
+            return True
+
+        if y1 - y2 == 1 and x1 == x2:
+            return True
+
+        return False
     elif piece == BLACK_ROOK or piece == WHITE_ROOK:
         return x1 == x2 or y1 == y2
     elif piece == BLACK_KING or piece == WHITE_KING:
