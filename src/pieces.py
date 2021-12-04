@@ -24,6 +24,11 @@ def can_move(piece_xy: str, target_xy: str, board: GameBoard):
                            board)  # check if player tries to jump over his chess
 
 
+def check_(y, x, is_white: bool, board: GameBoard):
+    chess, target_is_white = board.get_piece_xy(y, x)
+    return not (chess != ' ' and is_white == target_is_white)
+
+
 def can_move_stage2(piece: Tuple[str, bool], piece_xy: str, move_xy: str, board: GameBoard):
     y1, x1 = calc_xy(piece_xy)
     y2, x2 = calc_xy(move_xy)
@@ -32,21 +37,41 @@ def can_move_stage2(piece: Tuple[str, bool], piece_xy: str, move_xy: str, board:
 
     if piece in (BLACK_PAWN, WHITE_PAWN):
         if x1 == x2:
-            r = (y1 + 1, y2) if piece == BLACK_PAWN else (y2 - 1, y1, -1)
+            r = (y1 + 1, y2) if piece == BLACK_PAWN else (y2 - 1, y1, - 1)
             for y in range(*r):
-                chess, target_is_white = board.get_piece_xy(y, x1)
-                if chess != ' ' and is_white == target_is_white:
+                if not check_(y, x1, is_white, board):
                     return False
             return True
 
         # x1 != x2, seems like player tries to eat a chess
         return True
     elif piece in (BLACK_ROOK, WHITE_ROOK):
-        pass
+        if x1 == x2:
+            ma = max(y1, y2)
+            mi = min(y1, y2)
+            for y in range(mi + 1, ma):
+                if not check_(y, x1, is_white, board):
+                    return False
+            return True
+        else:
+            ma = max(x1, x2)
+            mi = min(x1, x2)
+            for x in range(mi + 1, ma):
+                if not check_(y1, x, is_white, board):
+                    return False
+            return True
     elif piece in (BLACK_KING, WHITE_KING):
-        pass
+        return True
     elif piece in (BLACK_BISHOP, WHITE_BISHOP):
-        pass
+        steps = abs(x1 - x2)
+
+        step_x = -1 if x1 > x2 else 1
+        step_y = -1 if y1 > y2 else 1
+
+        for i in range(1, steps):
+            if not check_(y1 + i * step_y, x1 + i * step_x, is_white, board):
+                return False
+        return True
     elif piece in (BLACK_QUEEN, WHITE_QUEEN):
         pass
     elif piece in (BLACK_KNIGHT, WHITE_KNIGHT):
