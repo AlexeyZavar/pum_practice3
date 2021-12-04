@@ -18,19 +18,27 @@ class GameBoard:
         self.pieces.append(
             [WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK])
 
+        self.logs = []
+
         self.white_turn = True
 
     def get_piece(self, piece_xy: str) -> Tuple[str, bool]:  # (symbol, is_white)
         x, y = calc_xy(piece_xy)
+
+        return self.get_piece_xy(x, y)
+
+    def get_piece_xy(self, x: int, y: int) -> Tuple[str, bool]:  # (symbol, is_white)
         piece = self.pieces[x][y]
 
         return piece, piece in WHITE_PIECES
 
-    def move_chess(self, piece_xy: str, move_xy: str) -> str:
+    def move_chess(self, piece_xy: str, move_xy: str):
         self.white_turn = not self.white_turn
 
         piece_x, piece_y = calc_xy(piece_xy)
         move_x, move_y = calc_xy(move_xy)
 
-        self.pieces[piece_x][piece_y], self.pieces[move_x][move_y] = self.pieces[move_x][move_y], self.pieces[piece_x][
-            piece_y]
+        self.pieces[move_x][move_y] = self.pieces[piece_x][piece_y]
+        self.pieces[piece_x][piece_y] = ' '
+
+        self.logs.append(f'{piece_xy} → {move_xy}')
